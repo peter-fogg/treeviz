@@ -1,0 +1,8 @@
+digraph {
+node_0 [label=55]
+node_1 [label=23]
+_1 [label=42]
+node_0 -> node_1
+node_0 -> _1
+
+}
