@@ -1,3 +1,6 @@
+import uuid
+import sys
+
 class Tree():
     'Minimal binary tree class for testing.'
     
@@ -5,6 +8,7 @@ class Tree():
         self.right = None
         self.left = None
         self.value = value
+	self.iden = uuid.uuid4()
     
     def is_leaf(self):
         'A leaf has no children on right or left.'
@@ -27,24 +31,24 @@ class Tree():
     #         nodes.update(self.right.nodes_dict())
     #     return nodes
     
-    def graphviz_id(self, i):
-        'Give a unique dot identifier for this node.'
-        return 'node_%s' % str(i) if i >= 0 else '_'+str(-i)
+    #def graphviz_id(self, i):
+    #    'Give a unique dot identifier for this node.'
+    #    return 'node_%s' % str(i) if i >= 0 else '_'+str(-i)
     
-    def graphviz_nodes(self, i=0):
+    def graphviz_nodes(self):
         '''
         Returns all the nodes of the tree in dot format, i.e.,
         
         node_name [label=foo]
         '''
-        s = '%s [label=%s]\n' % (self.graphviz_id(i), self.value)
+        s = '%s [label=%s]\n' % (self.iden, self.value)
         if self.left:
-            s += self.left.graphviz_nodes(i + 1)
-        if self.right:
-            s += self.right.graphviz_nodes(i - 1)
+            s += self.left.graphviz_nodes()
+	if self.right:
+            s += self.right.graphviz_nodes()
         return s
     
-    def graphviz_edges(self, i=0):
+    def graphviz_edges(self):
         '''
         Returns all the edges of the tree in dot format, i.e.,
         
@@ -52,11 +56,11 @@ class Tree():
         '''
         s = ''
         if self.left:
-            s += '%s -> %s\n' % (self.graphviz_id(i), self.left.graphviz_id(i + 1))
-            s += self.left.graphviz_edges(i + 1)
+            s += '%s -> %s\n' % (self.iden, self.left.iden)
+            s += self.left.graphviz_edges()
         if self.right:
-            s += '%s -> %s\n' % (self.graphviz_id(i), self.right.graphviz_id(i - 1))
-            s += self.right.graphviz_edges(i - 1)
+            s += '%s -> %s\n' % (self.iden, self.right.iden)
+            s += self.right.graphviz_edges()
         return s
     
     def __unicode__(self):
@@ -93,7 +97,15 @@ def to_graphviz(tree):
     return s
 
 def main():
-    print(to_graphviz(read_tree('treetest')))
+    args = sys.argv[1:]
+    if len(args) == 0:
+	    sys.exit('Input filename required.')
+    filename = args[0]
+    graph = to_graphviz(read_tree(filename))
+    filename = filename + '.dot'
+    f = open(filename, 'w')
+    f.write(graph)
+    f.close()
 
 if __name__ == '__main__':
     main()
