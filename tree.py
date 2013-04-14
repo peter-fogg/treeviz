@@ -8,7 +8,7 @@ class Tree():
         self.right = None
         self.left = None
         self.value = value
-	self.iden = uuid.uuid4()
+	self.iden = str(uuid.uuid4().int)
     
     def is_leaf(self):
         'A leaf has no children on right or left.'
